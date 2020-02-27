@@ -7,33 +7,35 @@ class CronJob {
         this.functionName = functionName;
         this.schedule = schedule;
         this.timezone = timezone;
+        this.requestTimeout = (process.env.TIMEOUT ? Number(process.env.TIMEOUT) : 30000);
+        this.job;
     }
 
     //Create cron job and start it
     async scheduleJob() {
         //Set timezone if specified
         if (this.timezone) {
-            cron.schedule(this.schedule, () => {
-                this.executeJob(functionData);
+            this.job = cron.schedule(this.schedule, async () => {
+                await this.executeJob();
             },
             {
                 timezone: this.timezone
             });
         }
         else {
-            cron.schedule(this.schedule, () => {
-                this.executeJob(functionData);
+            this.job = cron.schedule(this.schedule, async () => {
+                await this.executeJob();
             });
         }
     }
 
     //Function to be called by cron scheduler
-    async executeJob(functionData) {
+    async executeJob() {
         try {
             //Invoke function
             let functionResponse = await fetch(`${process.env.FAAS_URL}/function/${this.functionName}`, {
                 method: 'post',
-                timeout: requestTimeout
+                timeout: this.requestTimeout
             });
             if (functionResponse.ok) {
                 console.log(`Successfully invoked function: ${this.functionName}`);
@@ -46,11 +48,15 @@ class CronJob {
         }
         catch (err) {
             console.log(`Error: ${err}`);
-            throw error;
+            throw err;
         }
         finally {
             console.log(`Finished: ${this.functionName}`);
         }
+    }
+
+    destroyJob() {
+        this.job.destroy();
     }
 
     //Returns true if all attributes are the same as paramaters
