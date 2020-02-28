@@ -9,17 +9,14 @@ let gatewayUser = process.env.FAAS_GATEWAY_USER;
 let gatewayPass = process.env.FAAS_GATEWAY_PASS;
 //Stores all currently scheduled jobs
 let activeJobsList = [];
+let faasURI;
 
 (async () =>
 {
+    generateFaasURI();
+
     try {
         console.log("Starting cron connector");
-
-        //Read OpenFaaS gateway secrets
-        if (!gatewayUser || !gatewayPass) {
-            gatewayUser = await fs.readFile('/var/secrets/basic-auth-user');
-            gatewayPass = await fs.readFile('/var/secrets/basic-auth-password');
-        }
 
         let functions = await retrieveFunctions();
         await createCronJobs(functions);
@@ -40,7 +37,7 @@ let activeJobsList = [];
 
 //Retrieves list of functions from gateway
 async function retrieveFunctions() {
-    let res = await fetch(`${process.env.FAAS_URL}/system/functions`);
+    let res = await fetch(`${faasURI}/system/functions`);
     let functions = await res.json();
 
     return functions;
@@ -56,7 +53,7 @@ async function createCronJobs(functions) {
             if (crondex === -1) {
                 console.log(`Creating cron job for ${functionData.name}`);
                 let job = new CronJob(functionData.name, functionData.annotations.schedule, functionData.annotations.timezone);
-                await job.scheduleJob();
+                await job.scheduleJob(faasURI);
                 activeJobsList.push(job);
             }
             //If job exists but has some different property or properties, destroy existing one and create a new one
@@ -64,7 +61,7 @@ async function createCronJobs(functions) {
                 console.log(`Modifying cron job for ${functionData.name}`);
                 let job = new CronJob(functionData.name, functionData.annotations.schedule, functionData.annotations.timezone);
                 activeJobsList[crondex].destroyJob();
-                await job.scheduleJob();
+                await job.scheduleJob(faasURI);
                 activeJobsList[crondex] = job;
             }
         }
@@ -100,4 +97,21 @@ function indexOfCronJob(functionName, jobsList) {
         }
     }
     return -1;
+}
+
+//Read OpenFaaS gateway secrets
+async function generateFaasURI() {
+    try {
+        if (!gatewayUser || !gatewayPass) {
+            gatewayUser = await fs.readFile('/var/secrets/basic-auth-user');
+            gatewayPass = await fs.readFile('/var/secrets/basic-auth-password');
+            faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
+        }
+        else {
+            faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
+        }
+    }
+    catch (err) {
+        faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${process.env.FAAS_GATEWAY}`;
+    }
 }

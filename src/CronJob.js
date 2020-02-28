@@ -12,11 +12,11 @@ class CronJob {
     }
 
     //Create cron job and start it
-    async scheduleJob() {
+    async scheduleJob(faasURI) {
         //Set timezone if specified
         if (this.timezone) {
             this.job = cron.schedule(this.schedule, async () => {
-                await this.executeJob();
+                await this.executeJob(faasURI);
             },
             {
                 timezone: this.timezone
@@ -24,16 +24,16 @@ class CronJob {
         }
         else {
             this.job = cron.schedule(this.schedule, async () => {
-                await this.executeJob();
+                await this.executeJob(faasURI);
             });
         }
     }
 
     //Function to be called by cron scheduler
-    async executeJob() {
+    async executeJob(faasURI) {
         try {
             //Invoke function
-            let functionResponse = await fetch(`${process.env.FAAS_URL}/function/${this.functionName}`, {
+            let functionResponse = await fetch(`${faasURI}/function/${this.functionName}`, {
                 method: 'post',
                 timeout: this.requestTimeout
             });
