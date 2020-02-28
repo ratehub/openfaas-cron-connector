@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openfaas-cron-connector.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: auth
+          secret:
+            secretName: basic-auth
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image }}"
+          env:
+            - name: CONNECTOR_NAME
+              value: {{ .Values.connector_name | quote }}
+            - name: FAAS_GATEWAY
+              value: {{ .Values.faas_gateway | quote }}
+            - name: GATEWAY_SSL
+              value: {{ .Values.gateway_ssl | quote  }}
+              {{ if .Values.faas_gateway_user }}
+            - name: FAAS_GATEWAY_USER
+              value: {{ .Values.faas_gateway_user | quote }}
+              {{ end }}
+              {{ if .Values.faas_gateway_pass }}
+            - name: FAAS_GATEWAY_PASS
+              value: {{ .Values.faas_gateway_pass | quote }}
+              {{ end }}
+            - name: TIMEOUT
+              value: {{ .Values.timeout | quote }}
+          volumeMounts:
+            - name: auth
+              readOnly: true
+              mountPath: "/var/secrets"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
