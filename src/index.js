@@ -105,13 +105,13 @@ async function generateFaasURI() {
         if (!gatewayUser || !gatewayPass) {
             gatewayUser = await fs.readFile('/var/secrets/basic-auth-user');
             gatewayPass = await fs.readFile('/var/secrets/basic-auth-password');
-            faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
+            faasURI = `${process.env.GATEWAY_SSL == "true" ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
         }
         else {
-            faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
+            faasURI = `${process.env.GATEWAY_SSL == "true" ? "https" : "http"}://${gatewayUser}:${gatewayPass}@${process.env.FAAS_GATEWAY}`;
         }
     }
     catch (err) {
-        faasURI = `${process.env.GATEWAY_SSL ? "https" : "http"}://${process.env.FAAS_GATEWAY}`;
+        faasURI = `${process.env.GATEWAY_SSL == "true" ? "https" : "http"}://${process.env.FAAS_GATEWAY}`;
     }
 }
