@@ -13,7 +13,7 @@ let faasURI;
 
 (async () =>
 {
-    generateFaasURI();
+    await generateFaasURI();
 
     try {
         console.log("Starting cron connector");
