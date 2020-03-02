@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "openfaas-cron-connector.fullname" . }}
+  name: {{ include "openfaas-cron-connector.name" . }}
   labels:
     app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
