@@ -2,7 +2,17 @@
 A Node.js-based cron connector for [OpenFaaS](https://www.openfaas.com "OpenFaaS Project"), which allows users to specify a cron expression to call their function on, as well as a timezone for the cron schedule to follow. It can be deployed alongside OpenFaaS, or in an external cluster, as long as it can access the OpenFaaS gateway.
 
 ## Installation
+You can install the cron-connector using helm, with the chart located in this repo inside /deploy/openfaas-cron-connector.
 
+### Helm Chart Options
+| Option              | Usage                                                   | Default Value                             |
+| ------------------- | ------------------------------------------------------- | ----------------------------------------- |
+| `connector_name`    | The name of the cron-connector deployment in Kubernetes | `openfaas-cron-connector`                 |
+| `faas_gateway`      | The location of the OpenFaaS gateway, if you've installed it in the same namespace as OpenFaaS, use the default value, which is the internal Kubernetes address (also, make sure not to put `http://` or `https://` at the start or `/` at the end)                                                              | `gateway:8080`                            |
+| `gateway_ssl`       | Specifies whether faas_gateway uses https or http       | `false`                                   |
+| `faas_gateway_user` | The basic-auth username for the faas_gateway, not required if using the default faas_gateway  |     |
+| `faas_gateway_pass` | The basic-auth username for the faas_gateway, not required if using the default faas_gateway  |     |
+| `timeout`           | Time in milliseconds to wait for function to finish     | `30000`                                   |
 
 ## Usage
 To schedule a cron job for a function, simply specify a "schedule" annotation in your stack.yml file like this:
