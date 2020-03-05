@@ -43,7 +43,7 @@ class CronJob {
             else {
                 console.error(`Error invoking function: ${this.functionName}`);
                 console.error(JSON.stringify(`Status: ${functionResponse.statusText}`));
-                throw Error(JSON.stringify(await functionResponse.json()));
+                throw Error(JSON.stringify(await functionResponse.text()));
             }
         }
         catch (err) {
@@ -55,6 +55,7 @@ class CronJob {
         }
     }
 
+    //Destroy running cron job permanently
     destroyJob() {
         this.job.destroy();
     }
