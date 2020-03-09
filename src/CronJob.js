@@ -43,7 +43,7 @@ class CronJob {
             else {
                 console.error(`Error invoking function: ${this.functionName}`);
                 console.error(JSON.stringify(`Status: ${functionResponse.statusText}`));
-                throw Error(JSON.stringify(await functionResponse.text()));
+                throw Error(await functionResponse.text());
             }
         }
         catch (err) {
