@@ -1,4 +1,4 @@
-name: Java CI
+name: Build Docker Image
 
 on:
   push:
@@ -15,10 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: ssh setup
-      uses: webfactory/ssh-agent@v0.1.1
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Build the Docker image
       run: |
         docker build \
@@ -33,6 +29,6 @@ jobs:
     - name: Docker Push
       run: docker push gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//}
     - name: Tag the docker image to latest tag
-      run: docker tag gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//} gcr.io/platform-235214/openfaas-cron-connector:dev
+      run: docker tag gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//} gcr.io/platform-235214/openfaas-cron-connector:latest
     - name: Push the latest Docker image
-      run: docker push gcr.io/platform-235214/openfaas-cron-connector:dev
+      run: docker push gcr.io/platform-235214/openfaas-cron-connector:latest
