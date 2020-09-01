@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - 'add-gh-actions'
+      - 'master'
     paths-ignore:
       - 'package.json'
       - 'package-lock.json'
