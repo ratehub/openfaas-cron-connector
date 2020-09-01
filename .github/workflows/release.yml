@@ -1,0 +1,30 @@
+name: Release
+on:
+  push:
+    branches:
+      - 'add-gh-actions'
+    paths-ignore:
+      - 'package.json'
+      - 'package-lock.json'
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_RATEHUB_MACHINE_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_READ }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+        registry-url: 'https://packagecloud.io/ratehub/npm/npm/'
+        scope: '@ratehub'
+    - name: Install dependencies
+      run: npm install -g @semantic-release/git semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/npm @semantic-release/git @semantic-release/github
+    - name: Run semantic-release
+      run: |
+        npm ci
+        npx semantic-release --branches add-gh-actions --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm,@semantic-release/git --publish @semantic-release/github --tag-format='${version}'

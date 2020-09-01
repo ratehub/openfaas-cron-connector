@@ -1,0 +1,38 @@
+name: Java CI
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  DOCKER_USERNAME: _json_key
+  DOCKER_PASSWORD: ${{ secrets.GCP_SA_KEY_JSON }}
+  DOCKER_REGISTRY_URL: https://gcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: ssh setup
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Build the Docker image
+      run: |
+        docker build \
+        --file Dockerfile \
+        --tag gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//} \
+        --build-arg VCS_REF=`git rev-parse --short HEAD` \
+        --build-arg VERSION=${GITHUB_REF/refs\/tags\//} \
+        --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+        .
+    - name: Docker Login
+      run: docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" "${DOCKER_REGISTRY_URL}"
+    - name: Docker Push
+      run: docker push gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//}
+    - name: Tag the docker image to latest tag
+      run: docker tag gcr.io/platform-235214/openfaas-cron-connector:${GITHUB_REF/refs\/tags\//} gcr.io/platform-235214/openfaas-cron-connector:dev
+    - name: Push the latest Docker image
+      run: docker push gcr.io/platform-235214/openfaas-cron-connector:dev
