@@ -27,4 +27,4 @@ jobs:
     - name: Run semantic-release
       run: |
         npm ci
-        npx semantic-release --branches add-gh-actions --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm,@semantic-release/git --publish @semantic-release/github --tag-format='${version}'
+        npx semantic-release --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/npm,@semantic-release/git --publish @semantic-release/github --tag-format='${version}'
