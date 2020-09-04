@@ -4,7 +4,7 @@
 
 replicaCount: 1
 
-image: ratehub/openfaas-cron-connector:latest
+image: gcr.io/platform-235214/openfaas-cron-connector:latest
 connector_name: openfaas-cron-connector
 faas_gateway: gateway:8080
 gateway_ssl: false
