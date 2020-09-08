@@ -18,13 +18,18 @@ spec:
         app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
       volumes:
         - name: auth
           secret:
             secretName: basic-auth
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: CONNECTOR_NAME
               value: {{ .Values.connector_name | quote }}
