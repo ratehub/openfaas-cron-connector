@@ -8,7 +8,6 @@ const { combine, timestamp, prettyPrint } = format;
 
 let gatewayUser = process.env.FAAS_GATEWAY_USER;
 let gatewayPass = process.env.FAAS_GATEWAY_PASS;
-//Stores all currently scheduled jobs
 let activeJobsList = [];
 let faasURI;
 
