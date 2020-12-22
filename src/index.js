@@ -3,7 +3,8 @@ const cron = require("node-cron");
 const fetch = require("node-fetch");
 const dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const CronJob = require("./CronJob");
-
+const { format, createLogger, transports } = require('winston');
+const { combine, timestamp, prettyPrint } = format;
 
 let gatewayUser = process.env.FAAS_GATEWAY_USER;
 let gatewayPass = process.env.FAAS_GATEWAY_PASS;
@@ -11,27 +12,35 @@ let gatewayPass = process.env.FAAS_GATEWAY_PASS;
 let activeJobsList = [];
 let faasURI;
 
+const logger = createLogger({
+    format: combine(
+        timestamp(),
+        prettyPrint()
+    ),
+    transports: [
+        new transports.Console()
+    ]
+});
+
 (async () =>
 {
     await generateFaasURI();
 
     try {
-        console.log("Starting cron connector");
+        logger.info("Starting cron connector");
 
         let functions = await retrieveFunctions();
         await createCronJobs(functions);
 
         //Check regularly for new additions to the cron connector
         cron.schedule("*/3 * * * * *", async function() {
-            console.log("Refreshing functions...");
             let functions = await retrieveFunctions();
             await createCronJobs(functions);
             await cleanUpCronJobs(functions);
-            console.log("...Finished function refresh");
         });
     }
     catch (err) {
-       console.error(err);
+       logger.error(err);
     }
 })();
 
@@ -51,15 +60,17 @@ async function createCronJobs(functions) {
             var crondex = indexOfCronJob(functionData.name, activeJobsList);
             //If job doesn't exist yet
             if (crondex === -1) {
-                console.log(`Creating cron job for ${functionData.name}`);
-                let job = new CronJob(functionData.name, functionData.annotations.schedule, functionData.annotations.timezone);
+                logger.info(`Creating cron job for ${functionData.name}`);
+                let job = new CronJob(functionData.name, functionData.annotations.schedule,
+                    functionData.annotations.timezone, logger);
                 await job.scheduleJob(faasURI);
                 activeJobsList.push(job);
             }
             //If job exists but has some different property or properties, destroy existing one and create a new one
             else if (!activeJobsList[crondex].compare(functionData.name, functionData.annotations.schedule, functionData.annotations.timezone)) {
-                console.log(`Modifying cron job for ${functionData.name}`);
-                let job = new CronJob(functionData.name, functionData.annotations.schedule, functionData.annotations.timezone);
+                logger.info(`Modifying cron job for ${functionData.name}`);
+                let job = new CronJob(functionData.name, functionData.annotations.schedule,
+                    functionData.annotations.timezone, logger);
                 activeJobsList[crondex].destroyJob();
                 await job.scheduleJob(faasURI);
                 activeJobsList[crondex] = job;
@@ -85,7 +96,7 @@ async function cleanUpCronJobs(functions) {
         let crondex = indexOfCronJob(jobsList[i].functionName, jobsList);
         activeJobsList[crondex].destroyJob();
         activeJobsList.splice(crondex, 1);
-        console.log(`Removing cron job for ${jobsList[i].functionName}`);
+        logger.info(`Removing cron job for ${jobsList[i].functionName}`);
     }
 }
 

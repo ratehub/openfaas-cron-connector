@@ -3,12 +3,13 @@ const fetch = require("node-fetch");
 
 
 class CronJob {
-    constructor(functionName, schedule, timezone) {
+    constructor(functionName, schedule, timezone, logger) {
         this.functionName = functionName;
         this.schedule = schedule;
         this.timezone = timezone;
         this.requestTimeout = (process.env.TIMEOUT ? Number(process.env.TIMEOUT) : 30000);
         this.job;
+        this.logger = logger;
     }
 
     //Create cron job and start it
@@ -38,20 +39,20 @@ class CronJob {
                 timeout: this.requestTimeout
             });
             if (functionResponse.ok) {
-                console.log(`Successfully invoked function: ${this.functionName}`);
+                this.logger.info(`Successfully invoked function: ${this.functionName}`);
             }
             else {
-                console.error(`Error invoking function: ${this.functionName}`);
-                console.error(JSON.stringify(`Status: ${functionResponse.statusText}`));
+                this.logger.error(`Error invoking function: ${this.functionName}`);
+                this.logger.error(`Status: ${functionResponse.statusText}`);
                 throw Error(await functionResponse.text());
             }
         }
         catch (err) {
-            console.log(`Error: ${err}`);
+            this.logger.info(`${err}`);
             throw err;
         }
         finally {
-            console.log(`Finished: ${this.functionName}`);
+            this.logger.info(`Finished: ${this.functionName}`);
         }
     }
 
