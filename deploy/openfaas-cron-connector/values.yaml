@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: gcr.io/platform-235214/openfaas-cron-connector
-  tag: latest
+  tag: 1.0.1
   pullPolicy: IfNotPresent
 
 imagePullSecrets:
