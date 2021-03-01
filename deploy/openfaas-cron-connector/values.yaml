@@ -15,7 +15,7 @@ imagePullSecrets:
 connector_name: openfaas-cron-connector
 faas_gateway: gateway:8080
 gateway_ssl: false
-linkerd: disabled
+linkerd: enabled
 #faas_gateway_user: admin
 #faas_gateway_pass: admin
 timeout: 30000
