@@ -3,67 +3,86 @@ kind: Deployment
 metadata:
   name: {{ include "openfaas-cron-connector.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "openfaas-cron-connector.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "openfaas-cron-connector.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
-        linkerd.io/inject: '{{.Values.linkerd }}'
+      {{- include "openfaas-cron-connector.linkerdAnnotations" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "openfaas-cron-connector.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- include "openfaas-cron-connector.selectorLabels" . | nindent 8 }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-      volumes:
-        - name: auth
-          secret:
-            secretName: basic-auth
+      {{- end }}
+      serviceAccountName: {{ include "openfaas-cron-connector.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: CONNECTOR_NAME
-              value: {{ .Values.connector_name | quote }}
+              value: {{ .Values.settings.connector_name | quote }}
             - name: FAAS_GATEWAY
-              value: {{ .Values.faas_gateway | quote }}
+              value: {{ .Values.settings.faas_gateway | quote }}
             - name: GATEWAY_SSL
-              value: {{ .Values.gateway_ssl | quote  }}
-              {{ if .Values.faas_gateway_user }}
+              value: {{ .Values.settings.gateway_ssl | quote  }}
+              {{ if .Values.settings.faas_gateway_user }}
             - name: FAAS_GATEWAY_USER
-              value: {{ .Values.faas_gateway_user | quote }}
+              value: {{ .Values.settings.faas_gateway_user | quote }}
               {{ end }}
-              {{ if .Values.faas_gateway_pass }}
+              {{ if .Values.settings.faas_gateway_pass }}
             - name: FAAS_GATEWAY_PASS
-              value: {{ .Values.faas_gateway_pass | quote }}
+              value: {{ .Values.settings.faas_gateway_pass | quote }}
               {{ end }}
             - name: TIMEOUT
-              value: {{ .Values.timeout | quote }}
-          volumeMounts:
-            - name: auth
-              readOnly: true
-              mountPath: "/var/secrets"
+              value: {{ .Values.settings.timeout | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /var/secrets
+              name: auth
+              readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
+      volumes:
+        - name: auth
+          secret:
+            defaultMode: 420
+            secretName: {{ include "openfaas-cron-connector.basic-auth-secrets-name" . | quote }}
