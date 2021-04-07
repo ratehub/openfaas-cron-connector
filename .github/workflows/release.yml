@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'package.json'
       - 'package-lock.json'
+      - 'deploy/**'
+      - '.github/**'
 env:
   GITHUB_TOKEN: ${{ secrets.GH_RATEHUB_MACHINE_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_READ }}
