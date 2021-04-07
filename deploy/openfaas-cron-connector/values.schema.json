@@ -135,9 +135,6 @@
                 "gateway_ssl": {
                     "type": "boolean"
                 },
-                "linkerd": {
-                    "type": "string"
-                },
                 "timeout": {
                     "type": "integer"
                 }
