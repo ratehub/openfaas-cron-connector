@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - '*'
+    paths-ignore:
+      - 'deploy/**'
+      - '.github/**'
+  workflow_dispatch:
 
 env:
   DOCKER_USERNAME: _json_key

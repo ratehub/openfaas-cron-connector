@@ -1,6 +1,6 @@
 # openfaas-cron-connector
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
+![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
 
 A Helm chart for OpenFaaS Cron-Connector
 
@@ -19,7 +19,7 @@ A Helm chart for OpenFaaS Cron-Connector
 | basicAuthSecrets.values.basic-auth-user | string | `""` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"nginx"` |  |
+| image.repository | string | `"gcr.io/platform-235214/openfaas-cron-connector"` |  |
 | image.tag | string | `""` |  |
 | imagePullSecrets | list | `[]` |  |
 | linkerd.enabled | bool | `true` |  |
@@ -38,7 +38,6 @@ A Helm chart for OpenFaaS Cron-Connector
 | settings.connector_name | string | `"openfaas-cron-connector"` |  |
 | settings.faas_gateway | string | `"gateway:8080"` |  |
 | settings.gateway_ssl | bool | `false` |  |
-| settings.linkerd | string | `"enabled"` |  |
 | settings.timeout | int | `30000` |  |
 | tolerations | list | `[]` |  |
 

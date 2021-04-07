@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - master
-
+    paths:
+      - 'deploy/**'
 env:
   HELM_CHART_PATH: './deploy/openfaas-cron-connector'
   HELM_CHART_REPO_NAME: 'ratehub'

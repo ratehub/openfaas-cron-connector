@@ -16,12 +16,6 @@ LABEL org.label-schema.vcs-ref="$VCS_REF" \
 WORKDIR /usr/src/app
 COPY ./ ./
 
-RUN apk add --update \
-   curl \
-   bash \
- && rm -rf /var/cache/apk/*
-
-RUN npm install && npm cache clean --force
-COPY . .
+RUN npm ci && npm cache clean --force
 
 CMD [ "npm", "start" ]
