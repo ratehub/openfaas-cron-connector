@@ -8,6 +8,10 @@ on:
       - 'deploy/**'
       - '.github/**'
   workflow_dispatch:
+    inputs:
+      git-tag:
+        description: The Git Tag to run the workflow on.
+        required: true
 
 env:
   DOCKER_USERNAME: _json_key
@@ -18,7 +22,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Default Checkout
+      uses: actions/checkout@v1
+      if: github.event.inputs.git-tag == ''
+    - name: Workflow Dispatch Checkout
+      uses: actions/checkout@v1
+      if: github.event.inputs.git-tag != ''
+      with:
+        ref: ${{ github.event.inputs.git-tag }}
     - name: Build the Docker image
       run: |
         docker build \
