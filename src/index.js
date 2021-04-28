@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 const dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const CronJob = require("./CronJob");
 const { format, createLogger, transports } = require('winston');
-const { combine, timestamp, prettyPrint } = format;
+const { combine, timestamp, simple, json } = format;
 
 let gatewayUser = process.env.FAAS_GATEWAY_USER;
 let gatewayPass = process.env.FAAS_GATEWAY_PASS;
@@ -12,13 +12,10 @@ let activeJobsList = [];
 let faasURI;
 
 const logger = createLogger({
-    format: combine(
-        timestamp(),
-        prettyPrint()
-    ),
+    format: combine(timestamp(), simple(), json()),
     transports: [
-        new transports.Console()
-    ]
+        new transports.Console(),
+    ],
 });
 
 (async () =>
