@@ -34,7 +34,7 @@ class CronJob {
     async executeJob(faasURI) {
         try {
             //Invoke function
-            let functionResponse = await fetch(`${faasURI}/function/${this.functionName}`, {
+            let functionResponse = await fetch(`${faasURI}/async-function/${this.functionName}`, {
                 method: 'post',
                 timeout: this.requestTimeout
             });
