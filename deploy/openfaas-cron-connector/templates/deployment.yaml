@@ -53,8 +53,6 @@ spec:
               value: '{{.Values.settings.newRelicAppName}}'
             - name: NEW_RELIC_ENABLED
               value: '{{.Values.settings.newRelicEnable}}'
-            - name: NEW_RELIC_LOG
-              value: /var/log/newrelic/agent.log
             - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
               value: '{{.Values.settings.newRelicTracingEnable}}'
           securityContext:
