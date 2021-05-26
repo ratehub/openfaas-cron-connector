@@ -1,3 +1,4 @@
+require('newrelic');
 const fs = require('fs').promises;
 const cron = require("node-cron");
 const fetch = require("node-fetch");

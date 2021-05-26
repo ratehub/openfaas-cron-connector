@@ -47,6 +47,16 @@ spec:
               {{ end }}
             - name: TIMEOUT
               value: {{ .Values.settings.timeout | quote }}
+            - name: NEW_RELIC_LICENSE_KEY
+              value: '{{.Values.settings.newRelicLicense}}'
+            - name: NEW_RELIC_APP_NAME
+              value: '{{.Values.settings.newRelicAppName}}'
+            - name: NEW_RELIC_ENABLED
+              value: '{{.Values.settings.newRelicEnable}}'
+            - name: NEW_RELIC_LOG
+              value: /var/log/newrelic/agent.log
+            - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+              value: '{{.Values.settings.newRelicTracingEnable}}'
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
