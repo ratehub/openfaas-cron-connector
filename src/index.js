@@ -1,4 +1,4 @@
-require('newrelic');
+const newrelic = require('newrelic');
 const fs = require('fs').promises;
 const cron = require("node-cron");
 const fetch = require("node-fetch");
@@ -56,7 +56,9 @@ async function createCronJobs(functions) {
         if (functionData.annotations.schedule) {
 
             if(!cron.validate(functionData.annotations.schedule)){
-                logger.error(`invalid schedule on function '${functionData.name}' schedule - '${functionData.annotations.schedule}'`)
+                const errorMsg = `invalid schedule on function '${functionData.name}' schedule - '${functionData.annotations.schedule}'`;
+                logger.error(errorMsg);
+                newrelic.noticeError(new Error(errorMsg));
                 continue;
             }
 
