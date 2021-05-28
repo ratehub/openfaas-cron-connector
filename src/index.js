@@ -1,4 +1,4 @@
-require('newrelic');
+const newrelic = require('newrelic');
 const fs = require('fs').promises;
 const cron = require("node-cron");
 const fetch = require("node-fetch");
@@ -54,7 +54,15 @@ async function createCronJobs(functions) {
     for (let functionData of functions) {
         //Only create a job for functions that have been annotated with schedule
         if (functionData.annotations.schedule) {
-            var crondex = indexOfCronJob(functionData.name, activeJobsList);
+
+            if(!cron.validate(functionData.annotations.schedule)){
+                const errorMsg = `invalid schedule on function '${functionData.name}' schedule - '${functionData.annotations.schedule}'`;
+                logger.error(errorMsg);
+                newrelic.noticeError(new Error(errorMsg));
+                continue;
+            }
+
+            let crondex = indexOfCronJob(functionData.name, activeJobsList);
             //If job doesn't exist yet
             if (crondex === -1) {
                 logger.info(`Creating cron job for ${functionData.name}`);
@@ -83,7 +91,8 @@ async function cleanUpCronJobs(functions) {
     for (let functionData of functions) {
         let jobdex = indexOfCronJob(functionData.name, jobsList);
         //If the function exists and has a cron job, remove it from the temporary list
-        if (functionData.annotations.schedule && functionData.name === jobsList[jobdex].functionName) {
+        if (functionData.annotations.schedule && cron.validate(functionData.annotations.schedule) &&
+            functionData.name === jobsList[jobdex].functionName) {
             jobsList.splice(jobdex, 1);
         }
     }
