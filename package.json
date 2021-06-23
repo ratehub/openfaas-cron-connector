@@ -1,6 +1,6 @@
 {
   "name": "openfaas-cron-connector",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Adds cron functionality to OpenFaaS",
   "main": "src/index.js",
   "private": true,
