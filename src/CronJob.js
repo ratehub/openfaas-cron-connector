@@ -49,6 +49,7 @@ class CronJob {
                 }
             } catch (err) {
                 this.logger.info(`${err}`);
+                newrelic.noticeError(err);
                 throw err;
             } finally {
                 this.logger.info(`Finished: ${this.functionName}`);
