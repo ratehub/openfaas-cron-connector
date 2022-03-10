@@ -38,7 +38,8 @@ class CronJob {
                 //Invoke function
                 let functionResponse = await fetch(`${faasURI}/async-function/${this.functionName}`, {
                     method: 'post',
-                    timeout: this.requestTimeout
+                    timeout: this.requestTimeout,
+                    headers: {'x-cron-connector': 1},
                 });
                 if (functionResponse.ok) {
                     this.logger.info(`Successfully invoked function: ${this.functionName}`);
