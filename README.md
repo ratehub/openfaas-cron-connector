@@ -16,7 +16,7 @@ This service is used implicitly, annotate faas functions with the cron expressio
 
 ## 🚀 How to configure and run this service? 
 
-🚀 How to configure, run, and use this service?
+
 ### Helm Chart Options
 | Option              | Usage                                                   | Default Value                             |
 | ------------------- | ------------------------------------------------------- | ----------------------------------------- |
@@ -61,10 +61,9 @@ For help writing cron expressions, try using https://crontab.guru. Note that thi
 
 
 
-🟪 [DEV] https://github.com/ratehub/ratehub-k8s/tree/master/do-dev-1/microservices/apps/example-service.yaml
+🟪 [DEV] https://github.com/ratehub/ratehub-k8s/tree/master/do-dev-1/fass-netes/apps/cron-connector.yaml
 
-🟧 [QA] https://github.com/ratehub/ratehub-k8s/tree/master/gke-staging-01/microservices/apps/example-service.yaml
+🟧 [QA] https://github.com/ratehub/ratehub-k8s/tree/master/gke-staging-01/faas-netes/apps/cron-connector.yaml
 
-🟥 [PROD] https://github.com/ratehub/ratehub-k8s-prod/tree/master/gcp-prod-01/microservices/apps/example-service.yaml
-
+🟥 [PROD] https://github.com/ratehub/ratehub-k8s-prod/tree/master/gcp-prod-01/faas-netes/apps/cron-connector.yaml
 
