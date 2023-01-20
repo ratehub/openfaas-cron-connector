@@ -1,9 +1,18 @@
-# openfaas-cron-connector
-A Node.js-based cron connector for [OpenFaaS](https://www.openfaas.com "OpenFaaS Project"), which allows users to specify a cron expression to call their function on, as well as a timezone for the cron schedule to follow. It can be deployed alongside OpenFaaS, or in an external cluster, as long as it can access the OpenFaaS gateway.
+<h1 align="center">openfaas-cron-connector ⚙</h1>
 
-## Installation
-You can install the cron-connector using helm, with the chart located in this repo inside /deploy/openfaas-cron-connector.
+💬 What is this service?
+A Node.js-based cron connector for [OpenFaaS](https://www.openfaas.com "OpenFaaS Project")
 
+💡 Why was this service created?
+
+Allows developers to specify a cron expression to call their function on, as well as a timezone for the cron schedule to follow. It can be deployed alongside OpenFaaS, or in an external cluster, as long as it can access the OpenFaaS gateway.
+
+
+⏰ When to use this service?
+This service is used implicitly, annotate faas functions with the cron expressions and configuration when a developer needs to have a Faas function executed on a schedule.
+
+
+🚀 How to configure, run, and use this service?
 ### Helm Chart Options
 | Option              | Usage                                                   | Default Value                             |
 | ------------------- | ------------------------------------------------------- | ----------------------------------------- |
@@ -45,3 +54,13 @@ annotations:
 For a full list of available timezone strings, see [this JSON list](https://raw.githubusercontent.com/node-cron/tz-offset/a67968ab5b0efa6dee296dac32d3205b41f158e0/generated/offsets.json "JSON list of timezones").
 
 For help writing cron expressions, try using https://crontab.guru. Note that this site does not support seconds, while the cron-connector does.
+
+
+
+🟪 [DEV] https://github.com/ratehub/ratehub-k8s/tree/master/do-dev-1/microservices/apps/example-service.yaml
+
+🟧 [QA] https://github.com/ratehub/ratehub-k8s/tree/master/gke-staging-01/microservices/apps/example-service.yaml
+
+🟥 [PROD] https://github.com/ratehub/ratehub-k8s-prod/tree/master/gcp-prod-01/microservices/apps/example-service.yaml
+
+
