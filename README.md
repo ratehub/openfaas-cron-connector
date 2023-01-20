@@ -1,16 +1,20 @@
 <h1 align="center">openfaas-cron-connector ⚙</h1>
 
-💬 What is this service?
+## 💬 What is this service? 
+
 A Node.js-based cron connector for [OpenFaaS](https://www.openfaas.com "OpenFaaS Project")
 
-💡 Why was this service created?
+## 💡 Why was this service created?
 
 Allows developers to specify a cron expression to call their function on, as well as a timezone for the cron schedule to follow. It can be deployed alongside OpenFaaS, or in an external cluster, as long as it can access the OpenFaaS gateway.
 
 
-⏰ When to use this service?
+## ⏰ When to use this service? 
+
 This service is used implicitly, annotate faas functions with the cron expressions and configuration when a developer needs to have a Faas function executed on a schedule.
 
+
+## 🚀 How to configure and run this service? 
 
 🚀 How to configure, run, and use this service?
 ### Helm Chart Options
