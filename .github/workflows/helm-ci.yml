@@ -1,6 +1,11 @@
 name: "Helm chart CI"
 
 on:
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'deploy/**'
   push:
     branches:
       - master
@@ -13,16 +18,16 @@ env:
 
 jobs:
   helm:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: 'Checkout codebase'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Setup helm'
         id: install
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
-          version: 'v3.5.2'
+          version: 'v3.9.0'
 
       - name: Lint helm chart
         run: |
@@ -45,4 +50,4 @@ jobs:
           HELM_REPO_USERNAME: ${{ secrets.RATEHUB_HELM_USER }}
           HELM_REPO_PASSWORD: ${{ secrets.RATEHUB_HELM_PASS }}
         run: |
-          helm push "${HELM_CHART_PATH}" "${HELM_CHART_REPO_NAME}"
+          helm cm-push "${HELM_CHART_PATH}" "${HELM_CHART_REPO_NAME}"
