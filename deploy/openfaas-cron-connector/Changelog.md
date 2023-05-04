@@ -1,5 +1,21 @@
 # Change Log
 
+## 1.1.8 
+
+**Release date:** 2023-05-04
+
+![AppVersion: 2.1.1](https://img.shields.io/static/v1?label=AppVersion&message=2.1.1&color=success&logo=)
+![Helm: v3](https://img.shields.io/static/v1?label=Helm&message=v3&color=informational&logo=helm)
+
+
+* fix(helm): to use correct autoscaling syntax 
+
+### Default value changes
+
+```diff
+# No changes in this release
+```
+
 ## 1.1.7 
 
 **Release date:** 2023-05-02
@@ -8,7 +24,7 @@
 ![Helm: v3](https://img.shields.io/static/v1?label=Helm&message=v3&color=informational&logo=helm)
 
 
-* fix: Update to autoscaling/v2 
+* fix: Update to autoscaling/v2 (#17) 
 
 ### Default value changes
 
